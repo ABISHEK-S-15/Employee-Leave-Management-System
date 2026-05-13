@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments :: head('Dashboard')}"></head>
+
+<body>
+
+    <div th:replace="~{fragments :: sidebar(activePage='dashboard')}"></div>
+
+    <main class="main-wrapper">
+        <nav th:replace="~{fragments :: topbar}"></nav>
+
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center mb-5 animate-up">
+                <div>
+                    <h1 class="mb-2">Welcome Back, <span th:text="${user.fullName}" class="text-primary-light"></span>
+                    </h1>
+                    <p class="text-secondary m-0">Here's your leave overview for this year.</p>
+                </div>
+                <a th:href="@{/employee/leave/apply}" class="btn btn-glow">
+                    <i class="bi bi-plus-lg me-2"></i> Apply New Leave
+                </a>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <div class="col-xl-3 col-md-6">
+                    <div class="glass-card animate-up delay-1 d-flex align-items-center p-4 gap-4"
+                        style="min-height: 120px;">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                            style="width: 54px; height: 54px; min-width: 54px; border: 1px solid rgba(99, 102, 241, 0.2);">
+                            <i class="bi bi-calendar-event-fill fs-4"></i>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <small class="text-secondary fw-bold text-uppercase mb-1"
+                                style="font-size: 0.75rem; letter-spacing: 1px;">Annual Leave Available</small>
+                            <div class="d-flex align-items-baseline gap-2">
+                                <h2 class="m-0 fw-bold text-white lh-1" style="font-size: 2.2rem;"
+                                    th:text="${(balance.annualQuota + (balance.carriedForward != null ? balance.carriedForward : 0)) - balance.annualUsed}">
+                                    12</h2>
+                                <span class="text-secondary small fw-bold">/ <span
+                                        th:text="${balance.annualQuota + (balance.carriedForward != null ? balance.carriedForward : 0)}">18</span>
+                                    days</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="glass-card animate-up delay-2 d-flex align-items-center p-4 gap-4"
+                        style="min-height: 120px;">
+                        <div class="bg-secondary bg-opacity-10 text-secondary rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                            style="width: 54px; height: 54px; min-width: 54px; border: 1px solid rgba(168, 85, 247, 0.2);">
+                            <i class="bi bi-heart-pulse-fill fs-4"></i>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <small class="text-secondary fw-bold text-uppercase mb-1"
+                                style="font-size: 0.75rem; letter-spacing: 1px;">Sick Leave Available</small>
+                            <div class="d-flex align-items-baseline gap-2">
+                                <h2 class="m-0 fw-bold text-white lh-1" style="font-size: 2.2rem;"
+                                    th:text="${balance.sickQuota - balance.sickUsed}">10</h2>
+                                <span class="text-secondary small fw-bold">/ <span
+                                        th:text="${balance.sickQuota}">12</span> days</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="glass-card animate-up delay-3 d-flex align-items-center p-4 gap-4"
+                        style="min-height: 120px;">
+                        <div class="bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                            style="width: 54px; height: 54px; min-width: 54px; border: 1px solid rgba(245, 158, 11, 0.2);">
+                            <i class="bi bi-hourglass-split fs-4"></i>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <small class="text-secondary fw-bold text-uppercase mb-1"
+                                style="font-size: 0.75rem; letter-spacing: 1px;">Pending Requests</small>
+                            <h2 class="m-0 fw-bold text-warning lh-1" style="font-size: 2.2rem;"
+                                th:text="${pendingCount}">2</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="glass-card animate-up delay-4 d-flex align-items-center p-4 gap-4"
+                        style="min-height: 120px;">
+                        <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                            style="width: 54px; height: 54px; min-width: 54px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                            <i class="bi bi-check-all fs-4"></i>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <small class="text-secondary fw-bold text-uppercase mb-1"
+                                style="font-size: 0.75rem; letter-spacing: 1px;">Total Leave Taken</small>
+                            <h2 class="m-0 fw-bold text-success lh-1" style="font-size: 2.2rem;"
+                                th:text="${approvedThisYear}">6</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <div class="col-lg-8">
+                    <div class="glass-card h-100 animate-up" style="animation-delay: 0.5s;">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="m-0">Recent Requests</h4>
+                            <a th:href="@{/employee/leave/history}"
+                                class="text-primary text-decoration-none small fw-bold">View History <i
+                                    class="bi bi-arrow-right"></i></a>
+                        </div>
+                        <div class="premium-table-container">
+                            <table class="premium-table">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Duration</th>
+                                        <th>Days</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="leave : ${recentLeaves.content}">
+                                        <td>
+                                            <span class="fw-semibold" th:text="${leave.type}">ANNUAL</span>
+                                        </td>
+                                        <td class="text-secondary"
+                                            th:text="${#temporals.format(leave.startDate, 'MMM dd, yyyy')} + ' - ' + ${#temporals.format(leave.endDate, 'MMM dd, yyyy')}">
+                                            Jan 01 - Jan 05</td>
+                                        <td th:text="${leave.totalDays}">5</td>
+                                        <td>
+                                            <span class="status-pill"
+                                                th:classappend="${leave.status.name() == 'PENDING' ? 'pending' : (leave.status.name() == 'APPROVED' ? 'approved' : 'rejected')}"
+                                                th:text="${leave.status}">PENDING</span>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${recentLeaves.empty}">
+                                        <td colspan="4" class="text-center py-5 text-muted">
+                                            <i class="bi bi-inbox fs-1 d-block mb-3 opacity-25"></i>
+                                            No recent leave requests found.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="glass-card h-100 animate-up" style="animation-delay: 0.6s;">
+                        <h4 class="mb-4">Usage Analytics</h4>
+                        <div style="height: 300px; position: relative;">
+                            <canvas id="leaveChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments :: scripts}"></th:block>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:inline="javascript">
+        const annualUsed = /*[[${balance.annualUsed}]]*/ 0;
+        const sickUsed = /*[[${balance.sickUsed}]]*/ 0;
+        const casualUsed = /*[[${balance.casualUsed}]]*/ 0;
+
+        const ctx = document.getElementById('leaveChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Annual', 'Sick', 'Casual'],
+                datasets: [{
+                    data: [annualUsed, sickUsed, casualUsed],
+                    backgroundColor: ['#6366f1', '#a855f7', '#10b981'],
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                    borderWidth: 2,
+                    hoverOffset: 15
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#94a3b8', padding: 20, usePointStyle: true }
+                    }
+                },
+                cutout: '75%'
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Leave Sync</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            height: 700px;
+            margin: 20px;
+        }
+
+        .login-visual {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 2rem 0 0 2rem;
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-visual::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            filter: blur(80px);
+        }
+
+        .login-form-side {
+            flex: 0.8;
+            background: var(--bg-surface);
+            backdrop-filter: blur(40px);
+            border-radius: 0 2rem 2rem 0;
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-left: 1px solid var(--border-glass);
+        }
+
+        .brand-logo-large {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0.7));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @media (max-width: 992px) {
+            .login-visual {
+                display: none;
+            }
+
+            .login-form-side {
+                border-radius: 2rem;
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-container animate-up">
+        <div class="login-visual">
+            <h1 class="brand-logo-large">Leave Sync.</h1>
+            <p class="fs-4 text-white-50 mb-5">Mastering Leave management for the modern workforce.</p>
+        </div>
+        <div class="login-form-side">
+            <div class="mb-5">
+                <h2 class="mb-2">Welcome Back</h2>
+                <p class="text-secondary">Please enter your credentials to access portal</p>
+            </div>
+
+            <div th:if="${param.error}" class="alert alert-danger border-0 glass-card text-danger mb-4" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> Invalid email or password.
+            </div>
+            <div th:if="${param.logout}" class="alert alert-info border-0 glass-card text-info mb-4" role="alert">
+                <i class="bi bi-info-circle-fill me-2"></i> You have been logged out.
+            </div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="mb-4">
+                    <label for="email" class="form-label text-secondary fw-semibold">Email Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent border-glass text-secondary"><i
+                                class="bi bi-envelope"></i></span>
+                        <input type="email" class="form-control glass-input" id="email" name="email"
+                            placeholder="name@company.com" required autofocus>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="password" class="form-label text-secondary fw-semibold">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent border-glass text-secondary"><i
+                                class="bi bi-lock"></i></span>
+                        <input type="password" class="form-control glass-input" id="password" name="password"
+                            placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-glow w-100 py-3 fs-5">Log In</button>
+            </form>
+
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

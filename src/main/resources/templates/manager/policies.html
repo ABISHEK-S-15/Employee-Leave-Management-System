@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments :: head('Leave Policies')}"></head>
+
+<body>
+
+    <div th:replace="~{fragments :: sidebar(activePage='policies')}"></div>
+
+    <main class="main-wrapper">
+        <nav th:replace="~{fragments :: topbar}"></nav>
+
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center mb-5 animate-up">
+                <div>
+                    <h1 class="mb-2">Governance & Policies</h1>
+                    <p class="text-secondary m-0">Define the rules and quotas for organizational leave management.</p>
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-xl-10">
+                    <div class="glass-card animate-up">
+                        <form th:action="@{/manager/policies/update}" method="post" th:object="${policy}">
+                            <div th:if="${param.success}" class="alert glass-card border-success text-success mb-5">
+                                <i class="bi bi-shield-check me-2"></i> leave policies updated successfully!
+                            </div>
+                            <input type="hidden" th:field="*{id}">
+
+                            <div class="mb-5">
+                                <h4 class="mb-4 pb-2 border-glass">Annual Allocations</h4>
+                                <div class="row g-4">
+                                    <div class="col-md-4">
+                                        <label class="form-label text-secondary small fw-bold text-uppercase">Annual
+                                            Quota</label>
+                                        <input type="number" class="glass-input" th:field="*{annualQuota}" min="0"
+                                            required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label text-secondary small fw-bold text-uppercase">Sick
+                                            Quota</label>
+                                        <input type="number" class="glass-input" th:field="*{sickQuota}" min="0"
+                                            required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label text-secondary small fw-bold text-uppercase">Casual
+                                            Quota</label>
+                                        <input type="number" class="glass-input" th:field="*{casualQuota}" min="0"
+                                            required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-5">
+                                <h4 class="mb-4 pb-2 border-glass">Compliance Rules</h4>
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label text-secondary small fw-bold text-uppercase">Carry
+                                            Forward Limit</label>
+                                        <input type="number" class="glass-input" th:field="*{carryForwardLimit}" min="0"
+                                            required>
+                                        <p class="small text-secondary mt-2">Maximum unused days allowed to roll over to
+                                            next year.</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label text-secondary small fw-bold text-uppercase">Request
+                                            Cap</label>
+                                        <input type="number" class="glass-input" th:field="*{maxConsecutiveDays}"
+                                            min="0" required>
+                                        <p class="small text-secondary mt-2">Maximum consecutive days allowed in a
+                                            single application.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-5">
+                                <div class="form-check d-flex align-items-center gap-3">
+                                    <input class="form-check-input" type="checkbox" th:field="*{skipWeekends}"
+                                        id="skipWeekends"
+                                        style="width: 1.5rem; height: 1.5rem; margin-top: 0; cursor: pointer; border: 2px solid rgba(99, 102, 241, 0.5); background-color: rgba(255, 255, 255, 0.05);">
+                                    <div>
+                                        <label class="form-check-label fw-bold text-primary-light mb-0"
+                                            for="skipWeekends" style="cursor: pointer; font-size: 1.1rem;">
+                                            Exclude Weekends from Calculation
+                                        </label>
+                                        <p class="small text-secondary m-0">If enabled, Saturday and Sunday will not be
+                                            deducted from leave balance.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-3">
+                                <button type="submit" class="btn btn-glow px-5">Update Policy</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+
+</html>

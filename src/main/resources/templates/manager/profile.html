@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments :: head('Admin Profile')}"></head>
+
+<body>
+
+    <div th:replace="~{fragments :: sidebar(activePage='profile')}"></div>
+
+    <main class="main-wrapper">
+        <nav th:replace="~{fragments :: topbar}"></nav>
+
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                <div class="col-xl-9">
+                    <div class="glass-card animate-up mb-5">
+                        <div class="d-flex align-items-center mb-5 pb-4 border-glass">
+                            <div class="btn-glow rounded-circle d-flex align-items-center justify-content-center me-4"
+                                style="width: 80px; height: 80px; font-size: 32px;">
+                                <span th:text="${#strings.substring(user.fullName, 0, 1)}">M</span>
+                            </div>
+                            <div>
+                                <h2 class="mb-1" th:text="${user.fullName}">Manager Name</h2>
+                                <span class="badge bg-secondary bg-opacity-20 text-white px-3 py-1 rounded-pill"
+                                    th:text="${#strings.substring(user.role.name(), 5)}">MANAGER</span>
+                            </div>
+                        </div>
+
+                        <form th:action="@{/manager/profile/update}" method="post">
+                            <div th:if="${param.updated}" class="alert glass-card border-success text-success mb-4">
+                                <i class="bi bi-check-circle-fill me-2"></i>profile updated
+                                successfully!
+                            </div>
+
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary small fw-bold text-uppercase">Employee
+                                        ID</label>
+                                    <input type="text" class="glass-input opacity-75" th:value="${user.empId}" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary small fw-bold text-uppercase">Email</label>
+                                    <input type="email" class="glass-input opacity-75" th:value="${user.email}"
+                                        readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary small fw-bold text-uppercase">Contact
+                                        Number</label>
+                                    <input type="text" name="phone" class="glass-input" th:value="${user.phone}"
+                                        placeholder="Contact info">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary small fw-bold text-uppercase">Emergency
+                                        Contact</label>
+                                    <input type="text" name="emergencyContact" class="glass-input"
+                                        th:value="${user.emergencyContact}" placeholder="Emergency backup">
+                                </div>
+                                <div class="col-12">
+                                    <label
+                                        class="form-label text-secondary small fw-bold text-uppercase">Address</label>
+                                    <textarea class="glass-input" name="address" rows="3" th:text="${user.address}"
+                                        placeholder="Office or home address..."></textarea>
+                                </div>
+                                <div class="col-12 d-flex justify-content-end mt-4">
+                                    <button type="submit" class="btn btn-glow px-5">Save Profile Changes</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="glass-card animate-up" style="animation-delay: 0.2s;">
+                        <h4 class="mb-4 pb-3 border-glass">Security Settings
+                        </h4>
+                        <form th:action="@{/manager/profile/password}" method="post">
+                            <div th:if="${success}" class="alert glass-card border-success text-success mb-4"
+                                th:text="${success}"></div>
+                            <div th:if="${error}" class="alert glass-card border-danger text-danger mb-4"
+                                th:text="${error}"></div>
+
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary small fw-bold text-uppercase">Current
+                                        Password</label>
+                                    <input type="password" name="oldPassword" class="glass-input" required
+                                        placeholder="••••••••">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary small fw-bold text-uppercase">New
+                                        Password</label>
+                                    <input type="password" name="newPassword" class="glass-input" required
+                                        placeholder="••••••••">
+                                </div>
+                                <div class="col-12 d-flex justify-content-end mt-4">
+                                    <button type="submit"
+                                        class="btn btn-link text-warning text-decoration-none fw-bold">Update Access
+                                        Credentials</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+
+</html>

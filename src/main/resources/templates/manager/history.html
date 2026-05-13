@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Request History')}"></head>
+<body>
+
+<div th:replace="~{fragments :: sidebar(activePage='history')}"></div>
+
+<main class="main-wrapper">
+    <nav th:replace="~{fragments :: topbar}"></nav>
+
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center mb-5 animate-up">
+            <div>
+                <h1 class="mb-2">Processed Requests</h1>
+                <p class="text-secondary m-0">A complete log of all historical leave decisions.</p>
+            </div>
+        </div>
+
+        <div class="glass-card animate-up" style="animation-delay: 0.2s;">
+            <div class="premium-table-container">
+                <table class="premium-table">
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Type</th>
+                            <th>Duration</th>
+                            <th>Days</th>
+                            <th>Status</th>
+                            <th>Processed On</th>
+                            <th class="text-end">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="request : ${requests.content}">
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="btn-glow rounded-circle d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; font-size: 0.7rem;">
+                                        <span th:text="${#strings.substring(request.user.fullName, 0, 1)}">E</span>
+                                    </div>
+                                    <span class="fw-semibold" th:text="${request.user.fullName}">Employee Name</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-white bg-opacity-10 text-white-50 px-2 py-1" th:text="${request.type}">ANNUAL</span>
+                            </td>
+                            <td class="text-secondary" th:text="${#temporals.format(request.startDate, 'MMM dd')} + ' - ' + ${#temporals.format(request.endDate, 'MMM dd')}">Jan 01 - Jan 05</td>
+                            <td th:text="${request.totalDays}">5</td>
+                            <td>
+                                <span class="status-pill" 
+                                      th:classappend="${request.status.name() == 'PENDING' ? 'pending' : (request.status.name() == 'APPROVED' ? 'approved' : 'rejected')}" 
+                                      th:text="${request.status}">APPROVED</span>
+                            </td>
+                            <td class="text-white-50 fw-semibold small" th:text="${request.processedAt != null ? #temporals.format(request.processedAt, 'MMM dd, yyyy') : '—'}">Jan 01, 2024</td>
+                            <td class="text-end">
+                                <a th:if="${request.documentPath != null}" th:href="@{${request.documentPath}}" target="_blank" class="btn btn-link text-primary-glow p-0 fw-bold" title="View Document">
+                                    <i class="bi bi-file-earmark-text"></i> View
+                                </a>
+                                <span th:if="${request.documentPath == null}" class="text-secondary small italic">No Doc</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${requests.empty}">
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="bi bi-journal-x fs-1 d-block mb-3 opacity-25"></i>
+                                No historical requests found.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <nav th:if="${requests.totalPages > 1}" aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center gap-2 border-0">
+                    <li class="page-item" th:classappend="${requests.first} ? 'disabled'">
+                        <a class="page-link glass-card border-0 py-2 px-3 text-white" th:href="@{/manager/history(page=${requests.number - 1})}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item" th:classappend="${requests.last} ? 'disabled'">
+                        <a class="page-link glass-card border-0 py-2 px-3 text-white" th:href="@{/manager/history(page=${requests.number + 1})}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</main>
+
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

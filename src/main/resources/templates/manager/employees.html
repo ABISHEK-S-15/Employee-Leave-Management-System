@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments :: head('Employee Management')}"></head>
+
+<body>
+
+    <div th:replace="~{fragments :: sidebar(activePage='employees')}"></div>
+
+    <main class="main-wrapper">
+        <nav th:replace="~{fragments :: topbar}"></nav>
+
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center mb-5 animate-up">
+                <div>
+                    <h1 class="mb-2">Team Management</h1>
+                    <p class="text-secondary m-0">Maintain your organization's team and access controls.</p>
+                </div>
+                <button class="btn btn-glow" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                    <i class="bi bi-person-plus-fill me-2"></i> Onboard Employee
+                </button>
+            </div>
+
+            <div th:if="${param.added}" class="alert glass-card border-success text-success mb-4 animate-up">
+                <i class="bi bi-check-circle-fill me-2"></i> New employee successfully added to the system.
+            </div>
+            <div th:if="${param.deleted}" class="alert glass-card border-info text-info mb-4 animate-up">
+                <i class="bi bi-info-circle-fill me-2"></i> Employee record has been removed.
+            </div>
+            <div th:if="${param.error}" class="alert glass-card border-danger text-danger mb-4 animate-up">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> Operation failed. Email address may already be in
+                use.
+            </div>
+
+            <div class="glass-card animate-up" style="animation-delay: 0.2s;">
+                <div class="row mb-4">
+                    <div class="col-md-6 col-lg-4">
+                        <form th:action="@{/manager/employees}" method="get">
+                            <div class="position-relative">
+                                <i class="bi bi-search position-absolute text-secondary"
+                                    style="left: 1rem; top: 50%; transform: translateY(-50%); z-index: 5;"></i>
+                                <input type="text" class="glass-input" style="padding-left: 2.75rem;" name="search"
+                                    th:value="${search}" placeholder="Search team members...">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="premium-table-container">
+                    <table class="premium-table">
+                        <thead>
+                            <tr>
+                                <th>Employee ID</th>
+                                <th>Full Name</th>
+                                <th>Email Address</th>
+                                <th>Contact</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="member : ${teamMembers.content}">
+                                <td>
+                                    <span class="badge bg-white bg-opacity-10 text-primary-light"
+                                        th:text="${member.empId}">EMP-001</span>
+                                </td>
+                                <td class="fw-semibold" th:text="${member.fullName}">John Doe</td>
+                                <td class="text-secondary" th:text="${member.email}">john@example.com</td>
+                                <td th:text="${member.phone != null ? member.phone : '—'}">123-456-7890</td>
+                                <td class="text-end">
+                                    <form th:action="@{/manager/employee/delete}" method="post" class="d-inline"
+                                        onsubmit="return confirm('WARNING: Are you sure you want to permanently delete this employee?');">
+                                        <input type="hidden" name="employeeId" th:value="${member.id}">
+                                        <button type="submit"
+                                            class="btn btn-link text-danger p-0 text-decoration-none fw-bold small">
+                                            <i class="bi bi-trash3 me-1"></i> Terminate
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <tr th:if="${teamMembers.empty}">
+                                <td colspan="5" class="text-center py-5 text-secondary">
+                                    <i class="bi bi-people fs-1 d-block mb-3 opacity-25"></i>
+                                    No team members found matching your search.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <nav th:if="${teamMembers.totalPages > 1}" aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center gap-2 border-0">
+                        <li class="page-item" th:classappend="${teamMembers.first} ? 'disabled'">
+                            <a class="page-link glass-card border-0 py-2 px-3 text-white"
+                                th:href="@{/manager/employees(page=${teamMembers.number - 1}, search=${search})}">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item" th:classappend="${teamMembers.last} ? 'disabled'">
+                            <a class="page-link glass-card border-0 py-2 px-3 text-white"
+                                th:href="@{/manager/employees(page=${teamMembers.number + 1}, search=${search})}">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Employee Modal -->
+    <div class="modal fade" id="addEmployeeModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card border-0 p-0 overflow-hidden">
+                <form th:action="@{/manager/employee/add}" method="post" th:object="${newUser}">
+                    <div class="modal-header border-glass p-4">
+                        <h5 class="modal-title fw-bold">Onboard New Team Member</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="mb-4">
+                            <label class="text-secondary small fw-bold text-uppercase d-block mb-2">Full Legal
+                                Name</label>
+                            <input type="text" class="glass-input" th:field="*{fullName}" required
+                                placeholder="e.g. Alexander">
+                        </div>
+                        <div class="mb-4">
+                            <label class="text-secondary small fw-bold text-uppercase d-block mb-2">Email</label>
+                            <input type="email" class="glass-input" th:field="*{email}" required
+                                placeholder="alex@company.com">
+                        </div>
+                        <div class="mb-0">
+                            <label class="text-secondary small fw-bold text-uppercase d-block mb-2">Initial
+                                Password</label>
+                            <input type="text" class="glass-input" th:field="*{password}" required
+                                placeholder="••••••••">
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 p-4 pt-0 gap-3">
+                        <button type="button" class="btn btn-link text-white text-decoration-none small"
+                            data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-glow px-4">Register Employee</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+
+</html>

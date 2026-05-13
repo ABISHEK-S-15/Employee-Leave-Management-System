@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments :: head('Manager Dashboard')}"></head>
+
+<body>
+
+    <div th:replace="~{fragments :: sidebar(activePage='dashboard')}"></div>
+
+    <main class="main-wrapper">
+        <nav th:replace="~{fragments :: topbar}"></nav>
+
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center mb-5 animate-up">
+                <div>
+                    <h1 class="mb-2">Control Center</h1>
+                    <p class="text-secondary m-0"> Manage leave requests.</p>
+                </div>
+                <div class="d-flex gap-3">
+                </div>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <div class="col-xl-4 col-md-6">
+                    <div class="glass-card animate-up delay-1 d-flex align-items-center p-4 gap-4"
+                        style="min-height: 120px;">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                            style="width: 54px; height: 54px; min-width: 54px; border: 1px solid rgba(99, 102, 241, 0.2);">
+                            <i class="bi bi-person-check-fill fs-4"></i>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <small class="text-secondary fw-bold text-uppercase mb-1"
+                                style="font-size: 0.8rem; letter-spacing: 1px;">Team Size</small>
+                            <h2 class="m-0 fw-bold text-white lh-1" style="font-size: 2.5rem;"
+                                th:text="${teamMembersCount}">8</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-md-6">
+                    <div class="glass-card animate-up delay-2 d-flex align-items-center p-4 gap-4"
+                        style="min-height: 120px;">
+                        <div class="bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                            style="width: 54px; height: 54px; min-width: 54px; border: 1px solid rgba(245, 158, 11, 0.2);">
+                            <i class="bi bi-envelope-exclamation-fill fs-4"></i>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <small class="text-secondary fw-bold text-uppercase mb-1"
+                                style="font-size: 0.8rem; letter-spacing: 1px;">Pending Review</small>
+                            <h2 class="m-0 fw-bold text-warning lh-1" style="font-size: 2.5rem;"
+                                th:text="${pendingCount}">3</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-md-12">
+                    <div class="glass-card animate-up delay-3 d-flex align-items-center p-4 gap-4"
+                        style="min-height: 120px;">
+                        <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                            style="width: 54px; height: 54px; min-width: 54px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                            <i class="bi bi-calendar-check-fill fs-4"></i>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <small class="text-secondary fw-bold text-uppercase mb-1"
+                                style="font-size: 0.8rem; letter-spacing: 1px;">Processed This Year</small>
+                            <h2 class="m-0 fw-bold text-success lh-1" style="font-size: 2.5rem;"
+                                th:text="${approvedCount}">24</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${param.processed}" class="alert glass-card border-success text-success mb-4 animate-up"
+                role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> Leave request has been processed successfully!
+            </div>
+
+            <div class="glass-card animate-up" style="animation-delay: 0.4s;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="m-0">Pending Approvals</h4>
+                    <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill"
+                        th:text="${pendingCount + ' waiting'}">3 waiting</span>
+                </div>
+                <div class="premium-table-container">
+                    <table class="premium-table">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Leave Type</th>
+                                <th>Date Range</th>
+                                <th>Total Days</th>
+                                <th>Document</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="request : ${requests}" th:if="${request.status.name() == 'PENDING'}">
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="btn-glow rounded-circle d-flex align-items-center justify-content-center"
+                                            style="width: 32px; height: 32px; font-size: 0.8rem;">
+                                            <span th:text="${#strings.substring(request.user.fullName, 0, 1)}">J</span>
+                                        </div>
+                                        <span class="fw-semibold" th:text="${request.user.fullName}">John Doe</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-white bg-opacity-10 text-white-50 px-2 py-1"
+                                        th:text="${request.type}">ANNUAL</span>
+                                </td>
+                                <td class="text-secondary"
+                                    th:text="${#temporals.format(request.startDate, 'MMM dd')} + ' - ' + ${#temporals.format(request.endDate, 'MMM dd')}">
+                                    Jan 01 - Jan 05</td>
+                                <td th:text="${request.totalDays}">5</td>
+                                <td>
+                                    <a th:if="${request.documentPath != null}" th:href="@{${request.documentPath}}"
+                                        target="_blank" class="btn btn-link text-primary-glow p-0 fw-bold small"
+                                        title="View Document">
+                                        <i class="bi bi-file-earmark-text"></i> View
+                                    </a>
+                                    <span th:if="${request.documentPath == null}"
+                                        class="text-secondary small italic">None</span>
+                                </td>
+                                <td class="text-end">
+                                    <button type="button" class="btn btn-glow btn-sm py-1 px-3" data-bs-toggle="modal"
+                                        th:data-bs-target="'#leaveModal' + ${request.id}">
+                                        Review
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr th:if="${pendingCount == 0}">
+                                <td colspan="5" class="text-center py-5 text-secondary">
+                                    <i class="bi bi-shield-check fs-1 d-block mb-3 text-primary-light opacity-50"></i>
+                                    All clear! No pending requests.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Glass Modals -->
+    <div th:each="request : ${requests}" th:if="${request.status.name() == 'PENDING'}">
+        <div class="modal fade" th:id="'leaveModal' + ${request.id}" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content glass-card border-0 p-0 overflow-hidden">
+                    <form th:action="@{/manager/leave/process}" method="post">
+                        <input type="hidden" name="leaveId" th:value="${request.id}">
+                        <div class="modal-header border-glass p-4">
+                            <h5 class="modal-title fw-bold">Review Request</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <div class="mb-4">
+                                <label class="text-secondary small fw-bold text-uppercase d-block mb-1">Request
+                                    From</label>
+                                <h5 class="text-primary-light fw-bold m-0" th:text="${request.user.fullName}">John Doe
+                                </h5>
+                            </div>
+                            <div class="row g-3 mb-4">
+                                <div class="col-6">
+                                    <div>
+                                        <label class="text-secondary small fw-bold text-uppercase d-block mb-1">Leave
+                                            Type</label>
+                                        <span class="text-primary-light fw-bold" th:text="${request.type}">ANNUAL</span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div>
+                                        <label
+                                            class="text-secondary small fw-bold text-uppercase d-block mb-1">Duration</label>
+                                        <span class="text-primary-light fw-bold"
+                                            th:text="${request.totalDays + ' Days'}">5 Days</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="text-secondary small fw-bold text-uppercase d-block mb-1">Reason for
+                                    Leave</label>
+                                <div class="p-3 rounded border-glass text-primary-light" th:text="${request.reason}">
+                                    Vacation trip</div>
+                            </div>
+                            <div class="mb-4" th:if="${request.documentPath != null}">
+                                <a th:href="@{${request.documentPath}}" target="_blank"
+                                    class="btn btn-link text-primary-glow p-0 text-decoration-none small">
+                                    <i class="bi bi-paperclip"></i> View Attached Document
+                                </a>
+                            </div>
+                            <div class="mb-0">
+                                <label class="text-secondary small fw-bold text-uppercase d-block mb-2">Manager
+                                    Response</label>
+                                <textarea class="glass-input" name="comment" rows="3"
+                                    placeholder="Add feedback or reason for rejection..."></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0 p-4 pt-0 gap-3">
+                            <button type="submit" name="action" value="reject"
+                                class="btn btn-link text-danger text-decoration-none fw-bold">Reject Request</button>
+                            <button type="submit" name="action" value="approve" class="btn btn-glow px-4">Approve
+                                Leave</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+
+</html>
