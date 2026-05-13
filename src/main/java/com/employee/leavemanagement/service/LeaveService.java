@@ -156,18 +156,18 @@ public class LeaveService {
         LeaveRequest saved = leaveRequestRepository.save(request);
 
         List<User> managers = userRepository.findByRole(Role.ROLE_MANAGER);
-        if (!managers.isEmpty()) {
-            User manager = managers.get(0);
-            String dates = request.getStartDate().toString() + " to " + request.getEndDate().toString();
-            emailService.sendApprovalRequest(
-                    manager.getEmail(),
-                    manager.getFullName(),
-                    request.getUser().getFullName(),
-                    dates,
-                    totalDays,
-                    request.getType().name(),
-                    request.getReason());
-        }
+        // if (!managers.isEmpty()) {
+        //     User manager = managers.get(0);
+        //     String dates = request.getStartDate().toString() + " to " + request.getEndDate().toString();
+        //     emailService.sendApprovalRequest(
+        //             manager.getEmail(),
+        //             manager.getFullName(),
+        //             request.getUser().getFullName(),
+        //             dates,
+        //             totalDays,
+        //             request.getType().name(),
+        //             request.getReason());
+        // }
         return saved;
     }
 
@@ -213,17 +213,17 @@ public class LeaveService {
 
         leaveRequestRepository.save(request);
 
-        String dates = request.getStartDate().toString() + " to " + request.getEndDate().toString();
-        List<User> managers = userRepository.findByRole(Role.ROLE_MANAGER);
-        String managerName = managers.isEmpty() ? "Admin" : managers.get(0).getFullName();
+        // String dates = request.getStartDate().toString() + " to " + request.getEndDate().toString();
+        // List<User> managers = userRepository.findByRole(Role.ROLE_MANAGER);
+        // String managerName = managers.isEmpty() ? "Admin" : managers.get(0).getFullName();
 
-        emailService.sendStatusNotification(
-                request.getUser().getEmail(),
-                request.getUser().getFullName(),
-                status.name(),
-                dates,
-                managerName,
-                comment != null ? comment : "");
+        // emailService.sendStatusNotification(
+        //         request.getUser().getEmail(),
+        //         request.getUser().getFullName(),
+        //         status.name(),
+        //         dates,
+        //         managerName,
+        //         comment != null ? comment : "");
     }
 
     public void cancelLeaveRequest(Long leaveId, Long userId) {
