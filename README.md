@@ -1,3 +1,8 @@
+Deployed Link : [employee-leave-management-system-production.up.railway.app](employee-leave-management-system-production.up.railway.app)
+
+Manager login : email    : abisheksankar15@gmail.com
+                password : 123456789
+
 # Employee Leave Management System
 
 A robust, enterprise-grade Leave Management System built with **Spring Boot**, **Thymeleaf**, and **PostgreSQL**. This application streamlines the leave request process for both employees and managers with a modern, responsive interface.
